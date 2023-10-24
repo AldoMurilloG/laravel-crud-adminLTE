@@ -290,6 +290,26 @@ return [
     */
 
     'menu' => [
+        [
+            'text' => 'Lista de usuarios',
+            'url' => '#',
+            'icon' => 'fas fa-users', // icono de fontawesome
+            'can' => 'lista_usuarios' // permiso de admin
+        ],
+        [
+            'text' => 'Lista de Productos',
+            'url' => '#',
+            'icon' => 'fas fa-store', // icono de fontawesome
+            'can' => 'lista_productos' // permiso del vendedor
+        ],
+        [
+                'text' => 'Lista de Compras',
+                'url' => '#',
+                'icon' => 'fas fa-shopping-cart', // icono de fontawesome
+                'can' => 'lista_compras' // permiso del cliente
+        ],
+                
+        // fin yo agregue
         // Navbar items:
         [
             'type'         => 'navbar-search',
