@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Categoria;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductoController extends Controller
 {
@@ -100,10 +101,27 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    public function trash(){
+        $productos = Producto::onlyTrashed()->get();
+        $data = compact('producto');
+        return view('productos-trash')->with($data);
+    }
+
     public function destroy(Producto $producto){
         $producto->delete();
         return redirect()
             ->route('producto.index')
             ->with('alert', 'Producto eliminado exitosamente.');
     }
+    public function exportarProductosPDF() {
+        // Traemos los productos del vendedor logueado
+        $productos = Producto::where('vendedor_id', auth()->user()->id)->get();
+        // capturamos la vista y los datos que enviaremos a la misma
+        $pdf = Pdf::loadView('panel.vendedor.lista_productos.pdf_productos', compact('productos'));
+        //Renderizamos la vista
+        $pdf->render();
+        // Visualizaremos el PDF en el navegador
+        return $pdf->stream('productos.pdf');
+    }
+
 }

@@ -9,7 +9,7 @@
 
 {{-- Titulo en el contenido de la Pagina --}}
 @section('content_header')
-    <h1>Lista de Productos</h1>
+    <h1>Papelera de Productos</h1>
 @stop
 
 {{-- Contenido de la Pagina --}}
@@ -21,6 +21,12 @@
             <a href="{{ route('producto.create') }}" class="btn btn-success text-uppercase">
                 Nuevo Producto
             </a>
+            <a href="{{ route('exportar-productos-pdf') }}"  class="btn btn-primary" title="PDF" target="_blank">
+                <i class="fas fa-file-pdf">PDF</i>
+            </a>
+            {{-- <a href="{{ route('producto.trash') }}" class="btn btn-danger text-uppercase">
+                Ir a Papelera
+            </a> --}}
         </div>
         
         @if (session('alert'))
@@ -68,7 +74,7 @@
                                         @csrf 
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger text-uppercase">
-                                            Eliminar
+                                            Papelera
                                         </button>
                                     </form>
                                 </div>
