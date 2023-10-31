@@ -9,7 +9,7 @@
 
 {{-- Titulo en el contenido de la Pagina --}}
 @section('content_header')
-    <h1>Papelera de Productos</h1>
+    <h1>Lista de Productos</h1>
 @stop
 
 {{-- Contenido de la Pagina --}}
@@ -21,11 +21,15 @@
             <a href="{{ route('producto.create') }}" class="btn btn-success text-uppercase">
                 Nuevo Producto
             </a>
-            <a href="{{ route('exportar-productos-pdf') }}"  class="btn btn-primary" title="PDF" target="_blank">
-                <i class="fas fa-file-pdf">PDF</i>
+
+            <a href="{{ route('exportar-productos-pdf') }}" class="btn btn-danger" title="PDF"
+            target="_blank">
+                <i class="fas fa-file-pdf"></i> PDF
             </a>
-            {{-- <a href="{{ route('producto.trash') }}" class="btn btn-danger text-uppercase">
-                Ir a Papelera
+
+            {{-- <a href="{{ route('exportar-productos-excel') }}" class="btn btn-info" title="PDF"
+            target="_blank">
+                <i class="fas fa-file-excel"></i> Excel
             </a> --}}
         </div>
         
@@ -33,7 +37,6 @@
             <div class="col-12">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('alert') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
         @endif
@@ -70,25 +73,92 @@
                                     <a href="{{ route('producto.edit', $producto) }}" class="btn btn-sm btn-warning text-white text-uppercase me-1">
                                         Editar
                                     </a>
-                                    <form action="{{ route('producto.destroy', $producto) }}" method="POST">
+
+                                    <button type="button" class="btn btn-delete btn-sm btn-danger text-uppercase" data-toggle="modal" data-target="#deleteModal" data-id="{{ $producto->id }}" data-nombre="{{ $producto->nombre }}">
+                                        Eliminar
+                                    </button>
+
+                                    
+
+                                    {{-- <form action="{{ route('producto.destroy', $producto) }}" method="POST">
                                         @csrf 
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger text-uppercase">
-                                            Papelera
+                                            Eliminar
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 </div>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+                {{-- @include('panel.vendedor.lista_productos.modal-delete') --}}
             </div>
         </div>
     </div>
 </div>
 @stop
 
+{{-- Importacion de Archivos CSS --}}
+@section('css')
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+@stop
+
+
+{{-- Importacion de Archivos JS --}}
+@section('js')
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+
+    {{-- La funcion asset() es una funcion de Laravel PHP que nos dirige a la carpeta "public" --}}
+    <script src="{{ asset('js/productos.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                const button = $(event.relatedTarget) // Button that triggered the modal
+                const id = button.data('id') // Extract info from data-* attributes
+                const nombre = button.data('nombre') // Extract info from data-* attributes
+                
+                const modal = $(this)
+                const form = $('#formDelete')
+                form.attr('action', `{{ env('APP_URL') }}/panel/productos/${id}`);
+                modal.find('.modal-body p#message').text(`¿Estás seguro de eliminar el producto "${nombre}"?`)
+            })
+        });
+    </script>
+@stop
+{{-- modal  --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="formDelete" method="POST" action="#">
+            <div class="modal-body">
+                @csrf 
+                @method('DELETE')
+                
+                <p id="message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger text-uppercase">
+                    Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary text-uppercase" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+                
 {{-- Importacion de Archivos CSS --}}
 @section('css')
     

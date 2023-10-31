@@ -6,6 +6,7 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Categoria;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Validator;
 
 class ProductoController extends Controller
 {
@@ -34,11 +35,28 @@ class ProductoController extends Controller
         return view('panel.vendedor.lista_productos.create', compact('producto', 'categorias'));
     }
 
+    public function after(): array
+{
+    return [
+        function (Validator $validator) {
+            if ($this->somethingElseIsInvalid()) {
+                $validator->errors()->add(
+                    'field',
+                    'Something is wrong with this field!'
+                );
+            }
+        }
+    ];
+}
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request){
         $producto = new Producto();
+        // $validated = $request->validated();
+
+        // $validated = $request->safe()->only(['name', 'email']);
+        // $validated = $request->safe()->except(['name', 'email']);
 
         $producto->nombre = $request->get('nombre');
         $producto->descripcion = $request->get('descripcion');
@@ -101,10 +119,17 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function trash(){
-        $productos = Producto::onlyTrashed()->get();
-        $data = compact('producto');
-        return view('productos-trash')->with($data);
+    // public function trash(){
+    //     $productos = Producto::onlyTrashed()->get();
+    //     $data = compact('producto');
+    //     return view('productos-trash')->with($data);
+    // }
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|unique:posts|max:255',
+            'body' => 'required',
+        ];
     }
 
     public function destroy(Producto $producto){
